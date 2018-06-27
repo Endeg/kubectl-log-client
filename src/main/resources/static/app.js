@@ -6,8 +6,10 @@ function pollForLogs() {
             $.ajax({
                 url: "/log/pods/" + currentPod,
                 success: function(result) {
-                    var currentText = $("#output").text() + "\n"
-                    $("#output").html(currentText + result.join("\n"));
+                    var currentText = $("#output").text()
+                    if (currentText != "") {
+                        $("#output").html(currentText + "\n" + result.join("\n"));
+                    }
                     pollForLogs();
                 }
             });

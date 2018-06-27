@@ -8,12 +8,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class WrappedProcess {
 
     private static final Logger log = LoggerFactory.getLogger(WrappedProcess.class);
-    Process process;
+    private Process process;
     private InputStream inputStream;
+
+    private ConcurrentLinkedQueue<String> bufferedLines = new ConcurrentLinkedQueue<>();
 
     public WrappedProcess(String... args) {
         try {
@@ -28,14 +34,35 @@ public class WrappedProcess {
     }
 
     private void startUpdateLoop() {
+        new Thread(this::updateLines).run();
+    }
+
+    private void updateLines() {
         try (final Reader r = new InputStreamReader(inputStream);
              final BufferedReader br = new BufferedReader(r)) {
             String line;
             while ((line = br.readLine()) != null) {
-                log.info("line: " + line);
+                bufferedLines.add(line);
             }
         } catch (IOException e) {
             log.error("Problem reading process", e);
         }
+    }
+
+    public Collection<String> flush() {
+        final List<String> result = new ArrayList<>();
+        String line;
+        while ((line = bufferedLines.poll()) != null) {
+            result.add(line);
+        }
+        return result;
+    }
+
+    public Collection<String> flushToEnd() {
+        final List<String> result = new ArrayList<>(this.flush());
+        while (process.isAlive()) {
+            result.addAll(this.flush());
+        }
+        return result;
     }
 }

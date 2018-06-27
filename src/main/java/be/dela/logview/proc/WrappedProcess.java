@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WrappedProcess {
 
@@ -20,6 +21,8 @@ public class WrappedProcess {
     private InputStream inputStream;
 
     private ConcurrentLinkedQueue<String> bufferedLines = new ConcurrentLinkedQueue<>();
+
+    private AtomicBoolean completed = new AtomicBoolean(false);
 
     public WrappedProcess(String... args) {
         try {
@@ -34,7 +37,7 @@ public class WrappedProcess {
     }
 
     private void startUpdateLoop() {
-        new Thread(this::updateLines).run();
+        new Thread(this::updateLines).start();
     }
 
     private void updateLines() {
@@ -60,7 +63,10 @@ public class WrappedProcess {
 
     public Collection<String> flushToEnd() {
         final List<String> result = new ArrayList<>(this.flush());
-        while (process.isAlive()) {
+
+        process.onExit().thenAccept(proc -> this.completed.set(true));
+
+        while (!completed.get()) {
             result.addAll(this.flush());
         }
         return result;

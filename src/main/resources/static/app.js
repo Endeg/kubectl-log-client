@@ -9,16 +9,9 @@ function assignEventsToPodItems() {
             $.ajax({
                 url: "/log/pods/" + podName,
                 success: function(result) {
-                    var resHtml = '<ul id="pod-item">' +
-                        result.map(function(pod) { return "<li>" + pod + "</li>" }).join("") +
-                        "</ul>";
-
-                    $("#pod-list").html(resHtml);
-
-                    assignEventsToPodItems();
+                    $("#output").html(result.join("\n"));
                 }
             });
-
         }
     );
 }

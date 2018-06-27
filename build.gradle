@@ -19,7 +19,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'be.dela'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+sourceCompatibility = 9
 
 repositories {
     mavenCentral()

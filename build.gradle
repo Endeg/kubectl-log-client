@@ -1,21 +1,13 @@
 buildscript {
-    ext {
-        springBootVersion = '2.1.0.BUILD-SNAPSHOT'
-    }
     repositories {
         mavenCentral()
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
     }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 group = 'be.dela'
 version = '0.0.1-SNAPSHOT'
@@ -23,13 +15,16 @@ sourceCompatibility = 9
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/snapshot" }
-    maven { url "https://repo.spring.io/milestone" }
 }
 
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-undertow')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'be.dela.logview.LogviewApplication'
+    }
+}
+

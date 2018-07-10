@@ -1,8 +1,5 @@
 package be.dela.logview.proc;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WrappedProcess {
 
-    private static final Logger log = LoggerFactory.getLogger(WrappedProcess.class);
     private Process process;
     private InputStream inputStream;
 
@@ -48,7 +44,7 @@ public class WrappedProcess {
                 bufferedLines.add(line);
             }
         } catch (IOException e) {
-            log.error("Problem reading process", e);
+            e.printStackTrace();
         }
     }
 

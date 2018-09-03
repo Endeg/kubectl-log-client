@@ -12,7 +12,7 @@ public class ProcessEndpoint {
     private static Map<String, WrappedProcess> podLogs = new HashMap<>();
 
     public Collection<String> pods(String env) {
-        final WrappedProcess proc = new WrappedProcess("kubectl", "--kubeconfig=\"c:\\Work\\Dela\\kubectl\\kubeconfig-" + env + "\"", "-n", env, "get", "pods");
+        final WrappedProcess proc = new WrappedProcess("kubectl", "--kubeconfig=\".\\cert\\" + env + "\\kubeconfig\"", "-n", env, "get", "pods");
         final Collection<String> pods = proc.flushToEnd();
         return pods.stream()
                 .skip(1)
@@ -24,7 +24,7 @@ public class ProcessEndpoint {
         WrappedProcess pod = podLogs.get(podName);
 
         if (pod == null) {
-            pod = new WrappedProcess("kubectl", "--kubeconfig=\"c:\\Work\\Dela\\kubectl\\kubeconfig-" + env + "\"", "logs", "-f", "-v8", podName);
+            pod = new WrappedProcess("kubectl", "--kubeconfig=\".\\cert\\" + env + "\\kubeconfig\"", "logs", "-f", "-v8", podName);
             podLogs.put(podName, pod);
         }
 

@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class WrappedProcess {
 
@@ -22,6 +24,7 @@ public class WrappedProcess {
 
     public WrappedProcess(String... args) {
         try {
+            System.out.println("Running command: " + Arrays.stream(args).collect(Collectors.joining(" ")));
             final ProcessBuilder processBuilder = new ProcessBuilder(args);
             processBuilder.redirectErrorStream(true);
             this.process = processBuilder.start();

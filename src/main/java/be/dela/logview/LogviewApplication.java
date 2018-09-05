@@ -2,6 +2,9 @@ package be.dela.logview;
 
 import be.dela.logview.endpoints.ProcessEndpoint;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class LogviewApplication {
 
     public static void main(String[] args) throws InterruptedException {
@@ -17,8 +20,17 @@ public class LogviewApplication {
             final ProcessEndpoint endpoint = new ProcessEndpoint();
             final String env = args[0];
             final String podName = args[1];
+
+            final List<String> viewedPods = endpoint.pods(env).stream()
+                    .filter(pod -> pod.startsWith(podName))
+                    .collect(Collectors.toList());
+
             while (true) {
-                endpoint.contentForPods(env, podName).forEach(System.out::println);
+                for (String viewedPod : viewedPods) {
+                    endpoint.contentForPods(env, viewedPod).stream()
+                            .map(line -> "[" + viewedPod + "] - " + line)
+                            .forEach(System.out::println);
+                }
                 Thread.sleep(400L);
             }
         } else {

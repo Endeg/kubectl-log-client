@@ -25,13 +25,13 @@ public class LogviewApplication {
                     .filter(pod -> pod.startsWith(podName))
                     .collect(Collectors.toList());
 
+            for (int i = 0; i < viewedPods.size(); i++) {
+                String viewedPod = viewedPods.get(i);
+                endpoint.contentForPods(env, viewedPod);
+            }
+
             while (true) {
-                for (String viewedPod : viewedPods) {
-                    endpoint.contentForPods(env, viewedPod).stream()
-                            .map(line -> "[" + viewedPod + "] - " + line)
-                            .forEach(System.out::println);
-                }
-                Thread.sleep(400L);
+                Thread.sleep(500);
             }
         } else {
             System.out.println("Too many args!");

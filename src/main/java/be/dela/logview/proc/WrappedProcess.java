@@ -20,9 +20,14 @@ public class WrappedProcess {
 
     private ConcurrentLinkedQueue<String> bufferedLines = new ConcurrentLinkedQueue<>();
 
+    private final List<LineListener> lineListeners = new ArrayList<>();
+
     private AtomicBoolean completed = new AtomicBoolean(false);
 
-    public WrappedProcess(String... args) {
+    private final String processName;
+
+    public WrappedProcess(String processName, String... args) {
+        this.processName = processName;
         try {
             System.out.println("Running command: " + Arrays.stream(args).collect(Collectors.joining(" ")));
             final ProcessBuilder processBuilder = new ProcessBuilder(args);
@@ -44,6 +49,7 @@ public class WrappedProcess {
              final BufferedReader br = new BufferedReader(r)) {
             String line;
             while ((line = br.readLine()) != null) {
+                updateListeners(line);
                 bufferedLines.add(line);
             }
         } catch (IOException e) {
@@ -54,9 +60,15 @@ public class WrappedProcess {
     public Collection<String> flush() {
         final List<String> result = new ArrayList<>();
         String line;
+        int linesRead = 0;
         while ((line = bufferedLines.poll()) != null) {
             result.add(line);
+            linesRead++;
+            if (linesRead > 5) {
+                break;
+            }
         }
+
         return result;
     }
 
@@ -69,5 +81,15 @@ public class WrappedProcess {
             result.addAll(this.flush());
         }
         return result;
+    }
+
+    private void updateListeners(String line) {
+        for (int i = 0; i < lineListeners.size(); i++) {
+            lineListeners.get(i).onLine(processName, line);
+        }
+    }
+
+    public void addLineListener(LineListener lineListener) {
+        lineListeners.add(lineListener);
     }
 }

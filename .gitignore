@@ -25,3 +25,8 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Some other stuff
+*.txt
+*.zip
+/cert/

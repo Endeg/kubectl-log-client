@@ -29,10 +29,6 @@ public class LogviewApplication {
                 String viewedPod = viewedPods.get(i);
                 endpoint.contentForPods(env, viewedPod);
             }
-
-            while (true) {
-                Thread.sleep(500);
-            }
         } else {
             System.out.println("Too many args!");
         }

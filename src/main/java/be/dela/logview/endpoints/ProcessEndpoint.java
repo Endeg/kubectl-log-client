@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class ProcessEndpoint {
 
-    private static Map<String, WrappedProcess> podLogs = new HashMap<>();
+    private static Map<String, WrappedProcess> podProcesses = new HashMap<>();
 
     private static final LineListener CONSOLE_LINE_LISTENER = new PrintStreamLineListener(System.out);
 
@@ -25,12 +25,12 @@ public class ProcessEndpoint {
     }
 
     public Collection<String> contentForPods(final String env, String podName) {
-        WrappedProcess pod = podLogs.get(podName);
+        WrappedProcess pod = podProcesses.get(podName);
 
         if (pod == null) {
             pod = new WrappedProcess(podName, "kubectl", "--kubeconfig=\".\\cert\\" + env + "\\kubeconfig\"", "logs", "-f", "-v8", podName);
             pod.addLineListener(CONSOLE_LINE_LISTENER);
-            podLogs.put(podName, pod);
+            podProcesses.put(podName, pod);
         }
 
         return pod.flush();

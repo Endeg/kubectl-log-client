@@ -16,7 +16,8 @@ public class ProcessEndpoint {
     private static final LineListener CONSOLE_LINE_LISTENER = new PrintStreamLineListener(System.out);
 
     public Collection<String> pods(String env) {
-        final WrappedProcess proc = new WrappedProcess("list-pods", "kubectl", "--kubeconfig=\".\\cert\\" + env + "\\kubeconfig\"", "-n", env, "get", "pods");
+        final String certPath = new Config().getCertPath(env);
+        final WrappedProcess proc = new WrappedProcess("list-pods", "kubectl", "--kubeconfig=\"" + certPath + "\"", "-n", env, "get", "pods");
         final Collection<String> pods = proc.flushToEnd();
         return pods.stream()
                 .skip(1)
@@ -28,7 +29,8 @@ public class ProcessEndpoint {
         WrappedProcess pod = podProcesses.get(podName);
 
         if (pod == null) {
-            pod = new WrappedProcess(podName, "kubectl", "--kubeconfig=\".\\cert\\" + env + "\\kubeconfig\"", "logs", "-f", "-v8", podName);
+            final String certPath = new Config().getCertPath(env);
+            pod = new WrappedProcess(podName, "kubectl", "--kubeconfig=\"" + certPath + "\"", "logs", "-f", "-v8", podName);
             pod.addLineListener(CONSOLE_LINE_LISTENER);
             podProcesses.put(podName, pod);
         }

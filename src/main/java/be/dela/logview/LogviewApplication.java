@@ -2,17 +2,17 @@ package be.dela.logview;
 
 import be.dela.logview.endpoints.ProcessEndpoint;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class LogviewApplication {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.out.println("Pass environment (dev/test).");
         } else if (args.length == 1) {
             final ProcessEndpoint endpoint = new ProcessEndpoint();
-
             final String env = args[0];
             System.out.println("Available pods for " + env + ":");
             endpoint.pods(env).forEach(pod -> System.out.println("\t" + pod));

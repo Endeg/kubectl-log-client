@@ -13,7 +13,7 @@ public class PrintStreamLineListener implements LineListener {
     @Override
     public void onLine(String processName, String line) {
         synchronized (printStream) {
-            printStream.println("[" + processName + "] - " + line);
+            printStream.println(processName + " | " + line);
         }
     }
 }
